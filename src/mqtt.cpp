@@ -53,13 +53,13 @@ static void reconnect() {
 
 }
 
-static boolean publishMes(char *topic, char *payload) {
+static boolean publishMes(char *topic, char *payload, boolean retained) {
     if(!mqttClient.connected())
         reconnect();
         if(!mqttClient.connected())
             return false;
 
-    if(!mqttClient.publish(topic, payload)) {
+    if(!mqttClient.publish(topic, payload, retained)) {
         char errorMes[50];
         sprintf(errorMes, "MQTT Publish failed, rc=%d",mqttClient.state());
         Serial.println(errorMes);
@@ -78,7 +78,7 @@ boolean publishConfig () {
     char topic[MQTT_TOPIC_LENGTH+10];
     sprintf(topic,"%s/%s",mqttTopic,"config");
 
-    return publishMes(topic,payload);
+    return publishMes(topic,payload, true);
 }
 
 boolean publishCount(uint16_t count) {
@@ -89,7 +89,7 @@ boolean publishCount(uint16_t count) {
 
     char topic[MQTT_TOPIC_LENGTH + 10];
     sprintf(topic,"%s/%s",mqttTopic,"state");
-    return publishMes(topic,payload);
+    return publishMes(topic,payload,false);
 }
 
 
